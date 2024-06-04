@@ -1,0 +1,16 @@
+{
+  "name": "clipper_moderation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@philschmid/clipper": "^0.2.0",
+    "express": "^4.19.2"
+  }
+}

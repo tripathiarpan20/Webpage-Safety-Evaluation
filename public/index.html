@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Clipper Web App</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 10px;
+      overflow-x: auto;
+    }
+  </style>
+  <script>
+    async function clipWebsite() {
+      const url = document.getElementById('urlInput').value;
+      try {
+        const response = await axios.post('/clip', { url: url });
+        document.getElementById('markdownOutput').innerText = response.data.markdown;
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Clipper Web App</h1>
+  <input type="text" id="urlInput" placeholder="Enter a URL">
+  <button onclick="clipWebsite()">Clip Website</button>
+  <pre id="markdownOutput"></pre>
+</body>
+</html>
