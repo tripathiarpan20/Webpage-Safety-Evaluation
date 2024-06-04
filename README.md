@@ -28,3 +28,7 @@ node server.js
 
 - https://github.com/philschmid/clipper.js
 - https://platform.openai.com/docs/api-reference/moderations/create
+
+# Support 
+
+For incentivising similar future projects, consider starring this repo!
