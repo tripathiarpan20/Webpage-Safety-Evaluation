@@ -31,12 +31,21 @@
       background-color: #f5f5f5;
       padding: 10px;
       overflow-x: auto;
+      max-height: 400px;
+      overflow-y: scroll;
     }
-    #moderationOutput {
+    table {
+      width: 100%;
+      border-collapse: collapse;
       margin-top: 20px;
-      background-color: #f5f5f5;
-      padding: 10px;
-      white-space: pre-wrap;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
     }
   </style>
   <script>
@@ -45,9 +54,28 @@
       try {
         const response = await axios.post('/clip', { url: url });
         document.getElementById('markdownOutput').innerText = response.data.markdown;
-        document.getElementById('moderationOutput').innerText = JSON.stringify(response.data.moderation, null, 2);
+        displayModerationTable(response.data.moderation);
       } catch (error) {
         console.error('Error:', error);
+      }
+    }
+
+    function displayModerationTable(moderation) {
+      const tableBody = document.getElementById('moderationTableBody');
+      tableBody.innerHTML = '';
+
+      const result = moderation.results[0];
+      for (const category in result.categories) {
+        const row = document.createElement('tr');
+        const categoryCell = document.createElement('td');
+        const scoreCell = document.createElement('td');
+
+        categoryCell.innerText = category;
+        scoreCell.innerText = result.category_scores[category].toFixed(4);
+
+        row.appendChild(categoryCell);
+        row.appendChild(scoreCell);
+        tableBody.appendChild(row);
       }
     }
   </script>
@@ -56,7 +84,17 @@
   <h1>Clipper Web App</h1>
   <input type="text" id="urlInput" placeholder="Enter a URL">
   <button onclick="clipWebsite()">Clip Website</button>
+  <h2>Content of the URL</h2>
   <pre id="markdownOutput"></pre>
-  <pre id="moderationOutput"></pre>
+  <h2>OpenAI Moderation API Response</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+    <tbody id="moderationTableBody"></tbody>
+  </table>
 </body>
 </html>
