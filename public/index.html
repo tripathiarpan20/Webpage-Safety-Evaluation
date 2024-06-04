@@ -47,12 +47,19 @@
     th {
       background-color: #f2f2f2;
     }
+    .api-key-container {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+    }
   </style>
   <script>
     async function clipWebsite() {
       const url = document.getElementById('urlInput').value;
+      const apiKey = document.getElementById('apiKeyInput').value;
+
       try {
-        const response = await axios.post('/clip', { url: url });
+        const response = await axios.post('/clip', { url: url, apiKey: apiKey });
         document.getElementById('markdownOutput').innerText = response.data.markdown;
         displayModerationTable(response.data.moderation);
       } catch (error) {
@@ -96,5 +103,8 @@
     </thead>
     <tbody id="moderationTableBody"></tbody>
   </table>
+  <div class="api-key-container">
+    <input type="text" id="apiKeyInput" placeholder="Enter OpenAI API Key">
+  </div>
 </body>
 </html>

@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const { spawn } = require('child_process');
 const fs = require('fs');
@@ -11,6 +10,7 @@ app.use(express.static('public'));
 
 app.post('/clip', async (req, res) => {
   const url = req.body.url;
+  const apiKey = req.body.apiKey;
   console.log('Received URL:', url);
 
   const outputFile = 'output.md';
@@ -39,7 +39,7 @@ app.post('/clip', async (req, res) => {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                'Authorization': `Bearer ${apiKey}`,
               },
               body: JSON.stringify({ input: data }),
             });
