@@ -32,6 +32,12 @@
       padding: 10px;
       overflow-x: auto;
     }
+    #moderationOutput {
+      margin-top: 20px;
+      background-color: #f5f5f5;
+      padding: 10px;
+      white-space: pre-wrap;
+    }
   </style>
   <script>
     async function clipWebsite() {
@@ -39,6 +45,7 @@
       try {
         const response = await axios.post('/clip', { url: url });
         document.getElementById('markdownOutput').innerText = response.data.markdown;
+        document.getElementById('moderationOutput').innerText = JSON.stringify(response.data.moderation, null, 2);
       } catch (error) {
         console.error('Error:', error);
       }
@@ -50,5 +57,6 @@
   <input type="text" id="urlInput" placeholder="Enter a URL">
   <button onclick="clipWebsite()">Clip Website</button>
   <pre id="markdownOutput"></pre>
+  <pre id="moderationOutput"></pre>
 </body>
 </html>

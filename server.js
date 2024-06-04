@@ -1,13 +1,15 @@
+require('dotenv').config();
 const express = require('express');
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const app = express();
 
 app.use(express.json());
 app.use(express.static('public'));
 
-app.post('/clip', (req, res) => {
+app.post('/clip', async (req, res) => {
   const url = req.body.url;
   console.log('Received URL:', url);
 
@@ -23,16 +25,31 @@ app.post('/clip', (req, res) => {
     res.status(500).json({ error: 'An error occurred while running Clipper' });
   });
 
-  clipper.on('close', (code) => {
+  clipper.on('close', async (code) => {
     console.log('Clipper process exited with code:', code);
     if (code === 0) {
       const markdownPath = path.join(__dirname, outputFile);
-      fs.readFile(markdownPath, 'utf8', (err, data) => {
+      fs.readFile(markdownPath, 'utf8', async (err, data) => {
         if (err) {
           console.error('Error reading markdown file:', err);
           res.status(500).json({ error: 'An error occurred while reading the markdown file' });
         } else {
-          res.json({ markdown: data });
+          try {
+            const moderationResponse = await fetch('https://api.openai.com/v1/moderations', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+              },
+              body: JSON.stringify({ input: data }),
+            });
+
+            const moderationData = await moderationResponse.json();
+            res.json({ markdown: data, moderation: moderationData });
+          } catch (error) {
+            console.error('Error calling OpenAI moderation API:', error);
+            res.status(500).json({ error: 'An error occurred while calling the OpenAI moderation API' });
+          }
         }
       });
     } else {
